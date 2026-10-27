@@ -11,7 +11,11 @@ from .get_org_unit_engagements import GetOrgUnitEngagementsEngagements
 from .get_root import GetRoot
 from .get_root import GetRootOrg
 from .input_types import EventSendInput
+from .refresh_all import RefreshAll
+from .refresh_all import RefreshAllItuserRefresh
 from .send_event import SendEvent
+from .whoami import Whoami
+from .whoami import WhoamiMe
 
 
 def gql(q: str) -> str:
@@ -90,3 +94,42 @@ class GraphQLClient(AsyncBaseClient):
         response = await self.execute(query=query, variables=variables)
         data = self.get_data(response)
         return GetOrgUnitEngagements.parse_obj(data).engagements
+
+    async def refresh_all(
+        self,
+        owner: UUID,
+        priority: int,
+        cursor: Any | None | UnsetType = UNSET,
+    ) -> RefreshAllItuserRefresh:
+        query = gql("""
+            mutation RefreshAll($cursor: Cursor, $owner: UUID!, $priority: Int!) {
+              ituser_refresh(cursor: $cursor, limit: 100, owner: $owner, priority: $priority) {
+                page_info {
+                  next_cursor
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "cursor": cursor,
+            "owner": owner,
+            "priority": priority,
+        }
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return RefreshAll.parse_obj(data).ituser_refresh
+
+    async def whoami(self) -> WhoamiMe:
+        query = gql("""
+            query whoami {
+              me {
+                actor {
+                  uuid
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return Whoami.parse_obj(data).me

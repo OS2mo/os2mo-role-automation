@@ -14,6 +14,7 @@ router = APIRouter()
 
 PRIORITY_IT_USER = 1_000
 PRIORITY_ORG_UNIT = 100_000
+PRIORITY_IT_USER_REFRESH = 150_000
 
 
 async def send_event(
@@ -39,9 +40,19 @@ async def mo_engagement(
 
 @router.post("/events/mo/ituser")
 async def mo_ituser(event: Event[UUID], graphql_client: depends.GraphQLClient) -> None:
-    # Pass to internal ituser listener, prioritized.
+    if event.priority == PRIORITY_IT_USER_REFRESH:
+        # When we refresh everything, we keep the priority low
+        # (if everything is prioritized, nothing is)
+        priority = PRIORITY_IT_USER_REFRESH
+    else:
+        # Actual changes to IT users are prioritized
+        priority = min(event.priority, PRIORITY_IT_USER)
+
     await send_event(
-        graphql_client, "ituser", event.subject, min(event.priority, PRIORITY_IT_USER)
+        graphql_client,
+        "ituser",
+        event.subject,
+        priority,
     )
 
 
@@ -70,6 +81,25 @@ async def mo_org_unit(
                 engagement.uuid,
                 PRIORITY_ORG_UNIT,
             )
+        cursor = response.page_info.next_cursor
+        if cursor is None:
+            break
+
+
+@router.post("/events/mo/rolebinding_rule")
+async def mo_rolebinding_rule(
+    event: Event[UUID],
+    graphql_client: depends.GraphQLClient,
+) -> None:
+    # Refresh every IT user
+    me = await graphql_client.whoami()
+    cursor = None
+    while True:
+        response = await graphql_client.refresh_all(
+            owner=me.actor.uuid,
+            cursor=cursor,
+            priority=PRIORITY_IT_USER_REFRESH,
+        )
         cursor = response.page_info.next_cursor
         if cursor is None:
             break

@@ -44,3 +44,24 @@ query GetOrgUnitEngagements($cursor: Cursor, $org_unit: UUID!) {
     }
   }
 }
+
+mutation RefreshAll($cursor: Cursor, $owner: UUID!, $priority: Int!) {
+  ituser_refresh(
+    cursor: $cursor
+    limit: 100
+    owner: $owner
+    priority: $priority
+  ) {
+    page_info {
+      next_cursor
+    }
+  }
+}
+
+query whoami {
+  me {
+    actor {
+      uuid
+    }
+  }
+}
