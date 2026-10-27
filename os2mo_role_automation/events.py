@@ -12,6 +12,7 @@ from os2mo_role_automation.constants import EVENT_NAMESPACE
 
 router = APIRouter()
 
+PRIORITY_IT_USER = 1_000
 PRIORITY_ORG_UNIT = 100_000
 
 
@@ -34,6 +35,14 @@ async def mo_engagement(
 ) -> None:
     # Pass to internal engagement listener.
     await send_event(graphql_client, "engagement", event.subject, event.priority)
+
+
+@router.post("/events/mo/ituser")
+async def mo_ituser(event: Event[UUID], graphql_client: depends.GraphQLClient) -> None:
+    # Pass to internal ituser listener, prioritized.
+    await send_event(
+        graphql_client, "ituser", event.subject, min(event.priority, PRIORITY_IT_USER)
+    )
 
 
 @router.post("/events/mo/org_unit")
