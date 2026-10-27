@@ -6,6 +6,8 @@ from .base_model import UNSET
 from .base_model import UnsetType
 from .get_engagement_i_t_users import GetEngagementITUsers
 from .get_engagement_i_t_users import GetEngagementITUsersItusers
+from .get_org_unit_engagements import GetOrgUnitEngagements
+from .get_org_unit_engagements import GetOrgUnitEngagementsEngagements
 from .get_root import GetRoot
 from .get_root import GetRootOrg
 from .input_types import EventSendInput
@@ -64,3 +66,27 @@ class GraphQLClient(AsyncBaseClient):
         response = await self.execute(query=query, variables=variables)
         data = self.get_data(response)
         return GetEngagementITUsers.parse_obj(data).itusers
+
+    async def get_org_unit_engagements(
+        self, org_unit: UUID, cursor: Any | None | UnsetType = UNSET
+    ) -> GetOrgUnitEngagementsEngagements:
+        query = gql("""
+            query GetOrgUnitEngagements($cursor: Cursor, $org_unit: UUID!) {
+              engagements(
+                cursor: $cursor
+                limit: 100
+                filter: {org_unit: {ancestor: {uuids: [$org_unit]}}}
+              ) {
+                objects {
+                  uuid
+                }
+                page_info {
+                  next_cursor
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"cursor": cursor, "org_unit": org_unit}
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return GetOrgUnitEngagements.parse_obj(data).engagements

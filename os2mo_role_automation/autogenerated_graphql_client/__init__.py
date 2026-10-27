@@ -18,6 +18,10 @@ from .get_engagement_i_t_users import GetEngagementITUsers
 from .get_engagement_i_t_users import GetEngagementITUsersItusers
 from .get_engagement_i_t_users import GetEngagementITUsersItusersObjects
 from .get_engagement_i_t_users import GetEngagementITUsersItusersPageInfo
+from .get_org_unit_engagements import GetOrgUnitEngagements
+from .get_org_unit_engagements import GetOrgUnitEngagementsEngagements
+from .get_org_unit_engagements import GetOrgUnitEngagementsEngagementsObjects
+from .get_org_unit_engagements import GetOrgUnitEngagementsEngagementsPageInfo
 from .get_root import GetRoot
 from .get_root import GetRootOrg
 from .input_types import AccessLogFilter
@@ -231,6 +235,10 @@ __all__ = [
     "GetEngagementITUsersItusers",
     "GetEngagementITUsersItusersObjects",
     "GetEngagementITUsersItusersPageInfo",
+    "GetOrgUnitEngagements",
+    "GetOrgUnitEngagementsEngagements",
+    "GetOrgUnitEngagementsEngagementsObjects",
+    "GetOrgUnitEngagementsEngagementsPageInfo",
     "GetRoot",
     "GetRootOrg",
     "GraphQLClient",

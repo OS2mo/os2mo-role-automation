@@ -48,6 +48,12 @@ def create_app() -> FastAPI:
                     routing_key="engagement",
                     path="/events/mo/engagement",
                 ),
+                Listener(
+                    namespace="mo",
+                    user_key="role-automation-mo-org-unit",
+                    routing_key="org_unit",
+                    path="/events/mo/org_unit",
+                ),
             ],
         ),
     )

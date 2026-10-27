@@ -29,3 +29,18 @@ query GetEngagementITUsers($cursor: Cursor, $engagement: UUID!) {
     }
   }
 }
+
+query GetOrgUnitEngagements($cursor: Cursor, $org_unit: UUID!) {
+  engagements(
+    cursor: $cursor
+    limit: 100
+    filter: { org_unit: { ancestor: { uuids: [$org_unit] } } }
+  ) {
+    objects {
+      uuid
+    }
+    page_info {
+      next_cursor
+    }
+  }
+}

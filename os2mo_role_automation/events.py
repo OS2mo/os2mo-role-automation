@@ -12,6 +12,8 @@ from os2mo_role_automation.constants import EVENT_NAMESPACE
 
 router = APIRouter()
 
+PRIORITY_ORG_UNIT = 100_000
+
 
 async def send_event(
     graphql_client: GraphQLClient, routing_key: str, subject: UUID, priority: int
@@ -32,6 +34,36 @@ async def mo_engagement(
 ) -> None:
     # Pass to internal engagement listener.
     await send_event(graphql_client, "engagement", event.subject, event.priority)
+
+
+@router.post("/events/mo/org_unit")
+async def mo_org_unit(
+    event: Event[UUID], graphql_client: depends.GraphQLClient
+) -> None:
+    # The UUID of an org unit is never changed.
+    # The complicated change is what happens to "path_uuids" when an org unit
+    # is moved. This affects the calculation of:
+    # * Every engagement in the org unit.
+    # * Every engagement below the org unit.
+    # It's a bit hard to wrap ones head around, but it is actually only the
+    # *current* engagements (at or below) the *current* org unit that needs to
+    # be reconciled. This is because the subtree "follows", which means nothing
+    # else is affected (or there will be other events).
+    cursor = None
+    while True:
+        response = await graphql_client.get_org_unit_engagements(
+            cursor=cursor, org_unit=event.subject
+        )
+        for engagement in response.objects:
+            await send_event(
+                graphql_client,
+                "engagement",
+                engagement.uuid,
+                PRIORITY_ORG_UNIT,
+            )
+        cursor = response.page_info.next_cursor
+        if cursor is None:
+            break
 
 
 @router.post("/events/engagement")
