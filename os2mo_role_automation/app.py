@@ -25,12 +25,28 @@ def create_app() -> FastAPI:
         graphql_events=GraphQLEvents(
             declare_namespaces=[Namespace(name=EVENT_NAMESPACE)],
             declare_listeners=[
+                # Internal listeners
+                # ------------------
                 # We normalize all changes to this internal ituser queue.
                 Listener(
                     namespace=EVENT_NAMESPACE,
                     user_key="role-automation-ituser",
                     routing_key="ituser",
                     path="/events/ituser",
+                ),
+                Listener(
+                    namespace=EVENT_NAMESPACE,
+                    user_key="role-automation-engagement",
+                    routing_key="engagement",
+                    path="/events/engagement",
+                ),
+                # MO listeners
+                # ------------
+                Listener(
+                    namespace="mo",
+                    user_key="role-automation-mo-engagement",
+                    routing_key="engagement",
+                    path="/events/mo/engagement",
                 ),
             ],
         ),

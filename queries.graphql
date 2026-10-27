@@ -6,3 +6,26 @@ query GetRoot {
     user_key
   }
 }
+
+mutation SendEvent($input: EventSendInput!) {
+  event_send(input: $input)
+}
+
+query GetEngagementITUsers($cursor: Cursor, $engagement: UUID!) {
+  itusers(
+    cursor: $cursor
+    limit: 100
+    filter: {
+      engagement: { uuids: [$engagement], from_date: null, to_date: null }
+      from_date: null
+      to_date: null
+    }
+  ) {
+    objects {
+      uuid
+    }
+    page_info {
+      next_cursor
+    }
+  }
+}

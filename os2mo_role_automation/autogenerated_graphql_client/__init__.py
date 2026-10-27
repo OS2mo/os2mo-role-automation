@@ -14,6 +14,10 @@ from .exceptions import GraphQLClientGraphQLError
 from .exceptions import GraphQLClientGraphQLMultiError
 from .exceptions import GraphQLClientHttpError
 from .exceptions import GraphQlClientInvalidResponseError
+from .get_engagement_i_t_users import GetEngagementITUsers
+from .get_engagement_i_t_users import GetEngagementITUsersItusers
+from .get_engagement_i_t_users import GetEngagementITUsersItusersObjects
+from .get_engagement_i_t_users import GetEngagementITUsersItusersPageInfo
 from .get_root import GetRoot
 from .get_root import GetRootOrg
 from .input_types import AccessLogFilter
@@ -162,6 +166,7 @@ from .input_types import UuidsBoundITUserFilter
 from .input_types import UuidsBoundLeaveFilter
 from .input_types import UuidsBoundOrganisationUnitFilter
 from .input_types import ValidityInput
+from .send_event import SendEvent
 
 __all__ = [
     "AccessLogFilter",
@@ -222,6 +227,10 @@ __all__ = [
     "FileFilter",
     "FileStore",
     "FullEventFilter",
+    "GetEngagementITUsers",
+    "GetEngagementITUsersItusers",
+    "GetEngagementITUsersItusersObjects",
+    "GetEngagementITUsersItusersPageInfo",
     "GetRoot",
     "GetRootOrg",
     "GraphQLClient",
@@ -319,6 +328,7 @@ __all__ = [
     "RolebindingRuleDeleteInput",
     "RolebindingRuleFilter",
     "RolebindingRuleUpdateInput",
+    "SendEvent",
     "UuidsBoundClassFilter",
     "UuidsBoundEmployeeFilter",
     "UuidsBoundEngagementFilter",
