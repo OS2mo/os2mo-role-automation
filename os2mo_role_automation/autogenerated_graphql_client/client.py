@@ -8,6 +8,8 @@ from .get_engagement_i_t_users import GetEngagementITUsers
 from .get_engagement_i_t_users import GetEngagementITUsersItusers
 from .get_org_unit_engagements import GetOrgUnitEngagements
 from .get_org_unit_engagements import GetOrgUnitEngagementsEngagements
+from .get_rolebinding_i_t_users import GetRolebindingITUsers
+from .get_rolebinding_i_t_users import GetRolebindingITUsersItusers
 from .get_root import GetRoot
 from .get_root import GetRootOrg
 from .input_types import EventSendInput
@@ -133,3 +135,27 @@ class GraphQLClient(AsyncBaseClient):
         response = await self.execute(query=query, variables=variables)
         data = self.get_data(response)
         return Whoami.parse_obj(data).me
+
+    async def get_rolebinding_i_t_users(
+        self, uuid: UUID, cursor: Any | None | UnsetType = UNSET
+    ) -> GetRolebindingITUsersItusers:
+        query = gql("""
+            query GetRolebindingITUsers($cursor: Cursor, $uuid: UUID!) {
+              itusers(
+                filter: {rolebinding: {uuids: [$uuid]}, from_date: null, to_date: null}
+                cursor: $cursor
+                limit: 10
+              ) {
+                objects {
+                  uuid
+                }
+                page_info {
+                  next_cursor
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"cursor": cursor, "uuid": uuid}
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return GetRolebindingITUsers.parse_obj(data).itusers

@@ -13,6 +13,7 @@ from os2mo_role_automation.constants import EVENT_NAMESPACE
 router = APIRouter()
 
 PRIORITY_IT_USER = 1_000
+PRIORITY_ROLEBINDING = 3_000
 PRIORITY_ORG_UNIT = 100_000
 PRIORITY_IT_USER_REFRESH = 150_000
 
@@ -80,6 +81,29 @@ async def mo_org_unit(
                 "engagement",
                 engagement.uuid,
                 PRIORITY_ORG_UNIT,
+            )
+        cursor = response.page_info.next_cursor
+        if cursor is None:
+            break
+
+
+@router.post("/events/mo/rolebinding")
+async def mo_rolebinding(
+    event: Event[UUID],
+    graphql_client: depends.GraphQLClient,
+) -> None:
+    cursor = None
+    while True:
+        response = await graphql_client.get_rolebinding_i_t_users(
+            uuid=event.subject,
+            cursor=cursor,
+        )
+        for ituser in response.objects:
+            await send_event(
+                graphql_client,
+                "ituser",
+                ituser.uuid,
+                PRIORITY_ROLEBINDING,
             )
         cursor = response.page_info.next_cursor
         if cursor is None:

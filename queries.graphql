@@ -65,3 +65,18 @@ query whoami {
     }
   }
 }
+
+query GetRolebindingITUsers($cursor: Cursor, $uuid: UUID!) {
+  itusers(
+    filter: { rolebinding: { uuids: [$uuid] }, from_date: null, to_date: null }
+    cursor: $cursor
+    limit: 10
+  ) {
+    objects {
+      uuid
+    }
+    page_info {
+      next_cursor
+    }
+  }
+}

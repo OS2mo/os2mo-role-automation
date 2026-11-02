@@ -62,6 +62,12 @@ def create_app() -> FastAPI:
                 ),
                 Listener(
                     namespace="mo",
+                    user_key="role-automation-mo-rolebinding",
+                    routing_key="rolebinding",
+                    path="/events/mo/rolebinding",
+                ),
+                Listener(
+                    namespace="mo",
                     user_key="role-automation-mo-rolebinding-rule",
                     routing_key="rolebinding_rule",
                     path="/events/mo/rolebinding_rule",
