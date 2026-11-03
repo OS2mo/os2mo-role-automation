@@ -6,3 +6,77 @@ query GetRoot {
     user_key
   }
 }
+
+mutation SendEvent($input: EventSendInput!) {
+  event_send(input: $input)
+}
+
+query GetEngagementITUsers($cursor: Cursor, $engagement: UUID!) {
+  itusers(
+    cursor: $cursor
+    limit: 100
+    filter: {
+      engagement: { uuids: [$engagement], from_date: null, to_date: null }
+      from_date: null
+      to_date: null
+    }
+  ) {
+    objects {
+      uuid
+    }
+    page_info {
+      next_cursor
+    }
+  }
+}
+
+query GetOrgUnitEngagements($cursor: Cursor, $org_unit: UUID!) {
+  engagements(
+    cursor: $cursor
+    limit: 100
+    filter: { org_unit: { ancestor: { uuids: [$org_unit] } } }
+  ) {
+    objects {
+      uuid
+    }
+    page_info {
+      next_cursor
+    }
+  }
+}
+
+mutation RefreshAll($cursor: Cursor, $owner: UUID!, $priority: Int!) {
+  ituser_refresh(
+    cursor: $cursor
+    limit: 100
+    owner: $owner
+    priority: $priority
+  ) {
+    page_info {
+      next_cursor
+    }
+  }
+}
+
+query whoami {
+  me {
+    actor {
+      uuid
+    }
+  }
+}
+
+query GetRolebindingITUsers($cursor: Cursor, $uuid: UUID!) {
+  itusers(
+    filter: { rolebinding: { uuids: [$uuid] }, from_date: null, to_date: null }
+    cursor: $cursor
+    limit: 10
+  ) {
+    objects {
+      uuid
+    }
+    page_info {
+      next_cursor
+    }
+  }
+}
