@@ -80,3 +80,29 @@ query GetRolebindingITUsers($cursor: Cursor, $uuid: UUID!) {
     }
   }
 }
+
+mutation CreateRolebinding($input: RoleBindingCreateInput!) {
+  rolebinding_create(input: $input) {
+    uuid
+  }
+}
+
+mutation TerminateRolebinding($input: RoleBindingTerminateInput!) {
+  rolebinding_terminate(input: $input) {
+    uuid
+  }
+}
+
+query GetActualState($ituser: UUID!, $user_key: String!) {
+  rolebindings(
+    filter: { ituser: { uuids: [$ituser] }, user_keys: [$user_key] }
+  ) {
+    objects {
+      current {
+        role_response {
+          uuid
+        }
+      }
+    }
+  }
+}

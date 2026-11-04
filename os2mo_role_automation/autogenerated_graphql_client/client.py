@@ -4,6 +4,10 @@ from uuid import UUID
 from .async_base_client import AsyncBaseClient
 from .base_model import UNSET
 from .base_model import UnsetType
+from .create_rolebinding import CreateRolebinding
+from .create_rolebinding import CreateRolebindingRolebindingCreate
+from .get_actual_state import GetActualState
+from .get_actual_state import GetActualStateRolebindings
 from .get_engagement_i_t_users import GetEngagementITUsers
 from .get_engagement_i_t_users import GetEngagementITUsersItusers
 from .get_org_unit_engagements import GetOrgUnitEngagements
@@ -13,9 +17,13 @@ from .get_rolebinding_i_t_users import GetRolebindingITUsersItusers
 from .get_root import GetRoot
 from .get_root import GetRootOrg
 from .input_types import EventSendInput
+from .input_types import RoleBindingCreateInput
+from .input_types import RoleBindingTerminateInput
 from .refresh_all import RefreshAll
 from .refresh_all import RefreshAllItuserRefresh
 from .send_event import SendEvent
+from .terminate_rolebinding import TerminateRolebinding
+from .terminate_rolebinding import TerminateRolebindingRolebindingTerminate
 from .whoami import Whoami
 from .whoami import WhoamiMe
 
@@ -159,3 +167,54 @@ class GraphQLClient(AsyncBaseClient):
         response = await self.execute(query=query, variables=variables)
         data = self.get_data(response)
         return GetRolebindingITUsers.parse_obj(data).itusers
+
+    async def create_rolebinding(
+        self, input: RoleBindingCreateInput
+    ) -> CreateRolebindingRolebindingCreate:
+        query = gql("""
+            mutation CreateRolebinding($input: RoleBindingCreateInput!) {
+              rolebinding_create(input: $input) {
+                uuid
+              }
+            }
+            """)
+        variables: dict[str, object] = {"input": input}
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return CreateRolebinding.parse_obj(data).rolebinding_create
+
+    async def terminate_rolebinding(
+        self, input: RoleBindingTerminateInput
+    ) -> TerminateRolebindingRolebindingTerminate:
+        query = gql("""
+            mutation TerminateRolebinding($input: RoleBindingTerminateInput!) {
+              rolebinding_terminate(input: $input) {
+                uuid
+              }
+            }
+            """)
+        variables: dict[str, object] = {"input": input}
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return TerminateRolebinding.parse_obj(data).rolebinding_terminate
+
+    async def get_actual_state(
+        self, ituser: UUID, user_key: str
+    ) -> GetActualStateRolebindings:
+        query = gql("""
+            query GetActualState($ituser: UUID!, $user_key: String!) {
+              rolebindings(filter: {ituser: {uuids: [$ituser]}, user_keys: [$user_key]}) {
+                objects {
+                  current {
+                    role_response {
+                      uuid
+                    }
+                  }
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"ituser": ituser, "user_key": user_key}
+        response = await self.execute(query=query, variables=variables)
+        data = self.get_data(response)
+        return GetActualState.parse_obj(data).rolebindings

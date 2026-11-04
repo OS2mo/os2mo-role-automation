@@ -1,6 +1,8 @@
 from .async_base_client import AsyncBaseClient
 from .base_model import BaseModel
 from .client import GraphQLClient
+from .create_rolebinding import CreateRolebinding
+from .create_rolebinding import CreateRolebindingRolebindingCreate
 from .enums import AccessLogModel
 from .enums import Collection
 from .enums import FileStore
@@ -14,6 +16,11 @@ from .exceptions import GraphQLClientGraphQLError
 from .exceptions import GraphQLClientGraphQLMultiError
 from .exceptions import GraphQLClientHttpError
 from .exceptions import GraphQlClientInvalidResponseError
+from .get_actual_state import GetActualState
+from .get_actual_state import GetActualStateRolebindings
+from .get_actual_state import GetActualStateRolebindingsObjects
+from .get_actual_state import GetActualStateRolebindingsObjectsCurrent
+from .get_actual_state import GetActualStateRolebindingsObjectsCurrentRoleResponse
 from .get_engagement_i_t_users import GetEngagementITUsers
 from .get_engagement_i_t_users import GetEngagementITUsersItusers
 from .get_engagement_i_t_users import GetEngagementITUsersItusersObjects
@@ -178,6 +185,8 @@ from .refresh_all import RefreshAll
 from .refresh_all import RefreshAllItuserRefresh
 from .refresh_all import RefreshAllItuserRefreshPageInfo
 from .send_event import SendEvent
+from .terminate_rolebinding import TerminateRolebinding
+from .terminate_rolebinding import TerminateRolebindingRolebindingTerminate
 from .whoami import Whoami
 from .whoami import WhoamiMe
 from .whoami import WhoamiMeActor
@@ -206,6 +215,8 @@ __all__ = [
     "ClassTerminateInput",
     "ClassUpdateInput",
     "Collection",
+    "CreateRolebinding",
+    "CreateRolebindingRolebindingCreate",
     "DescendantParentBoundOrganisationUnitFilter",
     "EmployeeBoundAddressFilter",
     "EmployeeBoundAssociationFilter",
@@ -241,6 +252,11 @@ __all__ = [
     "FileFilter",
     "FileStore",
     "FullEventFilter",
+    "GetActualState",
+    "GetActualStateRolebindings",
+    "GetActualStateRolebindingsObjects",
+    "GetActualStateRolebindingsObjectsCurrent",
+    "GetActualStateRolebindingsObjectsCurrentRoleResponse",
     "GetEngagementITUsers",
     "GetEngagementITUsersItusers",
     "GetEngagementITUsersItusersObjects",
@@ -354,6 +370,8 @@ __all__ = [
     "RolebindingRuleFilter",
     "RolebindingRuleUpdateInput",
     "SendEvent",
+    "TerminateRolebinding",
+    "TerminateRolebindingRolebindingTerminate",
     "UuidsBoundClassFilter",
     "UuidsBoundEmployeeFilter",
     "UuidsBoundEngagementFilter",
